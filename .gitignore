@@ -1,0 +1,6 @@
+forth86
+src/*.o
+libx86/*.o
+test
+tests
+testing
