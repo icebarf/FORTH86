@@ -14,6 +14,7 @@ extern exit
 extern find_word
 extern parse_int64
 extern print_int64
+extern print_newline
 extern print_string
 extern read_char
 extern read_word
@@ -46,6 +47,76 @@ return_stack: resq 1
 
 %define cfa code_from_address
 section .text
+
+;; Forth words
+
+; arithmetic operations, I don't check for CF and OF yet.
+; until I can think of a good way to check for overflows
+; I will leave it unimplemented
+
+native '+', plus
+    pop rax
+    add [rsp], rax
+    jmp do_nextw
+
+native '-', minus
+    pop rax
+    sub [rsp], rax  ; [rsp] - rax
+    jmp do_nextw
+
+native '*', multiply
+    xor edx, edx
+    pop rax
+    imul qword[rsp]
+    mov [rsp], rax
+    jmp do_nextw
+
+native '/', divide
+    pop rax ; second
+    pop rdx ; first
+    push rax
+    mov rax, rdx
+    xor edx, edx
+    idiv qword [rsp]
+    mov [rsp], rax
+    jmp do_nextw
+
+native '%', remainder
+    pop rax
+    pop rdx
+    push rax
+    mov rax, rdx
+    xor edx, edx
+    idiv qword[rsp]
+    mov [rsp], rdx
+    jmp do_nextw
+
+native '.', print_num
+    pop rdi
+    call print_int64
+    call print_newline
+    jmp do_nextw
+
+; logical words
+native '=', equality
+    pop rax
+    cmp rax, [rsp]
+    jne .not_eq
+    mov qword[rsp], 1
+    jmp do_nextw
+.not_eq:
+    mov qword[rsp], 0
+    jmp do_nextw
+
+native 'not', not
+    xor qword[rsp], 1
+    jmp do_nextw
+
+native 'q', quit
+    xor edi, edi
+    call exit
+    jmp do_nextw
+
 ; code_from_address - finds the ext_nat or ext_col value from a word 
 ;                     skip over the header metadata basically
 ;   args: rdi (arg1) - address of the word header
@@ -56,16 +127,6 @@ code_from_address:
     add rdi, rax
     mov rax, rdi
     ret
-
-native '+', plus
-    pop rax
-    add [rsp], rax
-    jmp do_nextw
-
-native '.Q', quit
-    xor edi, edi
-    call exit
-    jmp do_nextw
 
 do_colon:
     sub forth_rstack, 8
@@ -86,9 +147,6 @@ do_nextw:
 
 
 interpreter_loop:
-    push rbp
-    mov rbp, rsp
-
     mov rdi, input_buf
     mov rsi, 1024
     call read_word
@@ -112,6 +170,8 @@ interpreter_loop:
     call parse_int64
     test rdx, rdx
     jz .more_else
+    push qword rax
+    jmp interpreter_loop
 
     .more_else:
         mov rdi, unknown_word
@@ -119,11 +179,14 @@ interpreter_loop:
         jmp .exit
 
 .exit:
+    pop rbp
     xor edi, edi
     call exit
 
 global _start
 _start:
+    push rbp
+    mov rbp, rsp
     mov forth_rstack, return_stack
     mov forth_memory, memory_cells
     jmp interpreter_loop 
