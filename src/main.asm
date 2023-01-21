@@ -19,7 +19,7 @@ extern read_char
 extern read_word
 
 
-%include "src/macros.inc"
+%include "macros.inc"
 
 %define forth_rstack r15
 %define forth_pc     r14
