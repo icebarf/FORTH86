@@ -73,7 +73,7 @@ native '*', multiply
 
 native '/', divide
     pop rax ; second
-    pop rdx ; first
+    pop rdx ; first ( 2 3 -- ) - rax : 3, rdx : 2 ; order as pushed to stack 
     push rax
     mov rax, rdx
     xor edx, edx
