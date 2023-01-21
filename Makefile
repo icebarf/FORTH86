@@ -10,7 +10,18 @@ OBJ :=  src/main.o		\
 
 INC :=  src/		\
 
+.PHONY: init clean
+
+
 all: $(BIN)
+
+newbuild: init $(BIN)
+
+rebuild: clean $(BIN)
+
+init:
+	git submodule update --init --recursive --remote libx86
+	command -v nasm || (echo "nasm not installed"; sh -c 'exit 1')
 
 $(OBJ): %.o : %.asm
 	$(AS) $(ASFLAGS) $<	 -I $(INC)
