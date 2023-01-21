@@ -2,7 +2,7 @@ AS := nasm
 ASFLAGS := -felf64 -Fdwarf -g
 LD := ld
 
-BIN := forth86
+BIN := forthress
 
 OBJ :=  src/main.o		\
 		libx86/lib.o	\
