@@ -13,6 +13,7 @@
 extern exit
 extern find_word
 extern parse_int64
+extern print_char
 extern print_int64
 extern print_newline
 extern print_string
@@ -22,14 +23,19 @@ extern read_word
 
 %include "macros.inc"
 
+%define CELL_SIZE    8
+
 %define forth_rstack r15
 %define forth_pc     r14
 %define forth_word   r13
-%define forth_memory r12
 %define exec_token   rax
 
 section .data
 unknown_word: db "Unknown word, please check documentation", 0xa, 0
+iofail: db "IO failure", 0xa, 0
+wrong_inp: db "Wrong input", 0xa, 0
+
+data_stack_bp: dq 0
 
 program_stub: dq 0
 extok_interpret: dq .interpreter
@@ -111,7 +117,7 @@ native '=', equality
 native 'and', and
     cmp qword[rsp], 0
     je .false
-    cmp qword[rsp+8], 0
+    cmp qword[rsp+CELL_SIZE], 0
     je .false
     pop rax
     mov qword[rsp], 1
@@ -148,19 +154,19 @@ native '<=', less_eq
 ; stack manipulation
 
 native 'rot', rotate
-    mov r8, [rsp+16]    ;a
-    mov r9, [rsp+8]     ;b
+    mov r8, [rsp+CELL_SIZE*2]    ;a
+    mov r9, [rsp+CELL_SIZE]     ;b
     mov r10, [rsp]      ;c
     mov [rsp], r8
-    mov [rsp+8], r10
-    mov [rsp+16], r9
+    mov [rsp+CELL_SIZE], r10
+    mov [rsp+CELL_SIZE], r9
     jmp do_nextw
 
 native 'swap', swap
     mov r8, [rsp]
-    mov r9, [rsp+8]
+    mov r9, [rsp+CELL_SIZE]
     mov [rsp], r9
-    mov [rsp+8], r8
+    mov [rsp+CELL_SIZE], r8
     jmp do_nextw
 
 native 'dup', duplicate
@@ -168,7 +174,73 @@ native 'dup', duplicate
     jmp do_nextw
 
 native 'drop', drop
-    add rsp, 8
+    add rsp, CELL_SIZE
+    jmp do_nextw
+
+; I/O Words
+
+native 'key', read_char
+    call read_char
+    push rax
+    jmp do_nextw
+
+native 'emit', emit_char
+    movzx rdi, byte[rsp]
+    add rsp, CELL_SIZE
+    call print_char
+    call print_newline
+    jmp do_nextw
+
+native 'number', read_signed_number
+    mov rdi, input_buf
+    mov rsi, 21
+    call read_word
+    test rdx, rdx
+    jz .io_failure
+    mov rdi, rax
+    call parse_int64
+    test rdx, rdx
+    jz .wrong_input
+    push rax
+    jmp do_nextw
+.io_failure:
+    mov rdi, iofail
+    call print_string
+    jmp do_nextw
+.wrong_input:
+    mov rdi, wrong_inp
+    call print_string
+    jmp do_nextw
+
+; forth machine memory manipulation words
+
+native 'mem', load_mem_addr
+    push qword memory_cells
+    jmp do_nextw
+
+native '!', load_data_at_addr
+    pop r8  ; data
+    pop r9  ; addr
+    mov [r9], r8
+    jmp do_nextw
+
+native 'c!', load_byte_at_addr
+    pop r8
+    pop r9
+    mov [r9], r8b
+    jmp do_nextw
+
+native '@', load_data_from_addr
+    mov r8, [rsp]
+    mov r9, [r8]
+    mov [rsp], r9
+    jmp do_nextw
+
+native 'c@', load_byte_from_addr
+    mov r8, [rsp]
+    mov r9b, [r8]
+    mov qword [rsp], 0
+    mov [rsp], r9b
     jmp do_nextw
 
 ; meta words
@@ -182,27 +254,27 @@ native 'q', quit
 ;   args: rdi (arg1) - address of the word header
 ;   return: rax  - address of `extok_` in the header
 code_from_address:
-    mov rax, [rdi + 8]
+    mov rax, [rdi + CELL_SIZE]
     add rax, 18
     add rdi, rax
     mov rax, rdi
     ret
 
 do_colon:
-    sub forth_rstack, 8
+    sub forth_rstack, CELL_SIZE
     mov [forth_rstack], forth_pc
-    add forth_word, 8
+    add forth_word, CELL_SIZE
     mov forth_pc, forth_word
     jmp do_nextw
 
 do_exit:
     mov forth_pc, [forth_rstack]
-    add forth_rstack, 8
+    add forth_rstack, CELL_SIZE
     jmp do_nextw
 
 do_nextw:
     mov forth_word, [forth_pc]
-    add forth_pc, 8
+    add forth_pc, CELL_SIZE
     jmp [forth_word]
 
 
@@ -247,6 +319,6 @@ global _start
 _start:
     push rbp
     mov rbp, rsp
+    mov [data_stack_bp], rsp
     mov forth_rstack, return_stack
-    mov forth_memory, memory_cells
     jmp interpreter_loop 
