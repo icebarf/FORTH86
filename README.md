@@ -43,11 +43,19 @@ Happy hacking! 😁
 - `<` less than
 - `<=` less than and equals
 
-#### Data Stack Manipulators
+#### Data Stack manipulators
 
 - `rot` moves 3rd element to top, pushes down the first two (a b c -- b c a)
 - `swap` swaps the top two elements on the data stack
 - `dup` duplicates the element on data stack top (a -- a a)
 - `drop` drops the top element on data stack (a -- )
+
+#### Machine Memory manipulators
+
+- `mem` store FORTH machine starting memory address on data stack
+- `!` (address data -- ) store data from stack starting at address
+- `c!` (address char -- ) store a single byte at address
+- `@` (address -- value) read one memory cell and store that value on stack
+- `c@` (address -- char ) reads a byte from address and store that value on the stack.
 
 </details>
