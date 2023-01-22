@@ -18,17 +18,12 @@ Happy hacking! 😁
 
 ### List of words implemented
 
-#### Meta
-
-- `q` quit the interpreter
-
 #### Input/Output
-
 - `.` Pops off an integer from stack top, and prints it
 
 #### Arithmetic
 
-- `N` any integer, is pushed to the data stack
+- `N` any integer, is pushed to the stack
 - `+`
 - `-`
 - `*`
@@ -36,18 +31,7 @@ Happy hacking! 😁
 - `%`
 
 #### Logical
-
 - `=` pop two arguments, compares them, writes `1` on equality, otherwise 0
-- `not` complement of top argument on the data stack (should be 0 or 1)
-- `and` logical and, writes 1 if both condition satisfy, oterhwise 0
-- `<` less than
-- `<=` less than and equals
-
-#### Data Stack Manipulators
-
-- `rot` moves 3rd element to top, pushes down the first two (a b c -- b c a)
-- `swap` swaps the top two elements on the data stack
-- `dup` duplicates the element on data stack top (a -- a a)
-- `drop` drops the top element on data stack (a -- )
+- `not` complement of top argument on the stack (should be 0 or 1)
 
 </details>
