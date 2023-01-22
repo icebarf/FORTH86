@@ -25,6 +25,7 @@ impl_ %+ %2:
 ;         arg3 - flags
 %macro colon 3
 %strlen WORD_LEN %1
+section .data
 %%PREV_WORD: dq PREV_WORD
 dq WORD_LEN
 db %1, 0
