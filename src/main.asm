@@ -108,70 +108,10 @@ native '=', equality
     mov qword[rsp], 0
     jmp do_nextw
 
-native 'and', and
-    cmp qword[rsp], 0
-    je .false
-    cmp qword[rsp+8], 0
-    je .false
-    pop rax
-    mov qword[rsp], 1
-    jmp do_nextw
-.false:
-    pop rax
-    mov qword[rsp], 0
-    jmp do_nextw
-
 native 'not', not
     xor qword[rsp], 1
     jmp do_nextw
 
-native '<', less
-    pop rax
-    cmp qword[rsp], rax
-    jnl .nless
-    push qword 1
-    jmp do_nextw
-.nless:
-    push qword 0
-    jmp do_nextw
-
-native '<=', less_eq
-    pop rax
-    cmp qword[rsp], rax
-    jnle .nlesseq
-    push qword 1
-    jmp do_nextw
-.nlesseq:
-    push qword 0
-    jmp do_nextw
-
-; stack manipulation
-
-native 'rot', rotate
-    mov r8, [rsp+16]    ;a
-    mov r9, [rsp+8]     ;b
-    mov r10, [rsp]      ;c
-    mov [rsp], r8
-    mov [rsp+8], r10
-    mov [rsp+16], r9
-    jmp do_nextw
-
-native 'swap', swap
-    mov r8, [rsp]
-    mov r9, [rsp+8]
-    mov [rsp], r9
-    mov [rsp+8], r8
-    jmp do_nextw
-
-native 'dup', duplicate
-    push qword[rsp]
-    jmp do_nextw
-
-native 'drop', drop
-    add rsp, 8
-    jmp do_nextw
-
-; meta words
 native 'q', quit
     xor edi, edi
     call exit
