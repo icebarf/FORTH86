@@ -42,6 +42,7 @@ Happy hacking! 😁
 - `and` logical and, writes 1 if both condition satisfy, oterhwise 0
 - `<` less than
 - `<=` less than and equals
+- `falsy` checks if value is falsy. Anything non-zero is a truthy value. writes 1 if falsy, otherwise 0
 
 #### Data Stack manipulators
 
