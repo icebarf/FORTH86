@@ -7,7 +7,7 @@ Please report any bugs that you find, the interpreter is still in its early/alph
 Happy hacking! 😁
 
 <details>
-<summary>Documentation</summary>
+<summary>## Documentation</summary>
 <br>
 
 ### Sizes or Limits
