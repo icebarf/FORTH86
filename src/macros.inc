@@ -10,7 +10,7 @@ section .data
 dq WORD_LEN
 db %1, 0
 db %3
-extok_ %+ %2:
+extok_%+ %2:
     dq impl_ %+ %2
 
 section .text
@@ -30,8 +30,8 @@ section .data
 dq WORD_LEN
 db %1, 0
 db %3
-extok_col_ %+ %2:
-
+extok_%+ %2:
+    dq impl_docolon
 %define PREV_WORD %%PREV_WORD
 %endmacro
 

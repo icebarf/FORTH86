@@ -38,6 +38,7 @@ wrong_inp: db "Wrong input", 0xa, 0
 data_stack_bp: dq 0
 
 program_stub: dq 0
+section .rodata
 extok_interpret: dq .interpreter
 .interpreter: dq interpreter_loop
 
@@ -50,15 +51,12 @@ input_buf: resb 1024
 resq 1023
 return_stack: resq 1
 
-
-%define cfa code_from_address
 section .text
 
-;; Forth words
+;; FORTH Words
 
-; arithmetic operations, I don't check for CF and OF yet.
-; until I can think of a good way to check for overflows
-; I will leave it unimplemented
+;; arithmetic operations, I don't check for CF and OF yet.
+;; Until I can think of a good way to use RFLAGS, I won't use it.
 
 native '+', plus
     pop rax
@@ -97,13 +95,17 @@ native '%', remainder
     mov [rsp], rdx
     jmp do_nextw
 
-native '.', print_num
-    pop rdi
-    call print_int64
-    call print_newline
+
+;; logical words
+
+native 'falsy', falsy
+    cmp qword[rsp], 0
+    jne .not_falsy
+    mov qword[rsp], 1
+.not_falsy:
+    mov qword[rsp], 0
     jmp do_nextw
 
-; logical words
 native '=', equality
     pop rax
     cmp rax, [rsp]
@@ -135,10 +137,10 @@ native '<', less
     pop rax
     cmp qword[rsp], rax
     jnl .nless
-    push qword 1
+    mov qword[rsp], 1
     jmp do_nextw
 .nless:
-    push qword 0
+    mov qword[rsp], 0
     jmp do_nextw
 
 native '<=', less_eq
@@ -151,7 +153,23 @@ native '<=', less_eq
     push qword 0
     jmp do_nextw
 
-; stack manipulation
+;colon '>', greater
+;    dq extok_swap
+;    dq extok_less
+;    dq extok_doexit
+;
+;colon 'or', or
+;    dq extok_falsy
+;    dq extok_swap
+;    dq extok_falsy
+;    dq extok_not
+;    dq extok_swap
+;    dq extok_not
+;    dq extok_and
+;    dq extok_not
+;    dq extok_doexit
+
+;; stack manipulation
 
 native 'rot', rotate
     mov r8, [rsp+CELL_SIZE*2]    ;a
@@ -177,7 +195,13 @@ native 'drop', drop
     add rsp, CELL_SIZE
     jmp do_nextw
 
-; I/O Words
+;; I/O Words
+
+native '.', print_num
+    pop rdi
+    call print_int64
+    call print_newline
+    jmp do_nextw
 
 native 'key', read_char
     call read_char
@@ -212,7 +236,7 @@ native 'number', read_signed_number
     call print_string
     jmp do_nextw
 
-; forth machine memory manipulation words
+;; forth machine memory manipulation words
 
 native 'mem', load_mem_addr
     push qword memory_cells
@@ -253,6 +277,7 @@ native 'q', quit
 ;                     skip over the header metadata basically
 ;   args: rdi (arg1) - address of the word header
 ;   return: rax  - address of `extok_` in the header
+%define cfa code_from_address
 code_from_address:
     mov rax, [rdi + CELL_SIZE]
     add rax, 18
