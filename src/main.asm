@@ -20,11 +20,9 @@ extern print_string
 extern read_char
 extern read_word
 
-
 %include "macros.inc"
 
 %define CELL_SIZE    8
-
 %define forth_rstack r15
 %define forth_pc     r14
 %define forth_word   r13
