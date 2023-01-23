@@ -40,9 +40,12 @@ Happy hacking! 😁
 - `=` pop two arguments, compares them, writes `1` on equality, otherwise 0
 - `not` complement of top argument on the data stack (should be 0 or 1)
 - `and` logical and, writes 1 if both condition satisfy, oterhwise 0
+- `or` logical or
 - `<` less than
+- `>` greater than
 - `<=` less than and equals
-- `falsy` checks if value is falsy. Anything non-zero is a truthy value. writes 1 if falsy, otherwise 0
+- `>=` greater than and equals
+- `falsy` checks if value is falsy. Anything non-zero is a truthy value. writes 1 if truthy, otherwise 0
 
 #### Data Stack manipulators
 

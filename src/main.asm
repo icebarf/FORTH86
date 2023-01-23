@@ -98,10 +98,10 @@ native '%', remainder
 native 'falsy', falsy
     cmp qword[rsp], 0
     jne .not_falsy
-    mov qword[rsp], 1
+    mov qword[rsp], 0
     jmp do_nextw
 .not_falsy:
-    mov qword[rsp], 0
+    mov qword[rsp], 1
     jmp do_nextw
 
 native '=', equality
@@ -154,6 +154,11 @@ native '<=', less_eq
 colon '>', greater
     dq extok_swap
     dq extok_less
+    dq extok_do_exit
+
+colon '>=', greater_eq
+    dq extok_swap
+    dq extok_less_eq
     dq extok_do_exit
 
 colon 'or', or
