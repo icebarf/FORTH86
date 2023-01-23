@@ -38,7 +38,6 @@ wrong_inp: db "Wrong input", 0xa, 0
 data_stack_bp: dq 0
 
 program_stub: dq 0
-section .rodata
 extok_interpret: dq .interpreter
 .interpreter: dq interpreter_loop
 
@@ -102,6 +101,7 @@ native 'falsy', falsy
     cmp qword[rsp], 0
     jne .not_falsy
     mov qword[rsp], 1
+    jmp do_nextw
 .not_falsy:
     mov qword[rsp], 0
     jmp do_nextw
@@ -153,21 +153,21 @@ native '<=', less_eq
     push qword 0
     jmp do_nextw
 
-;colon '>', greater
-;    dq extok_swap
-;    dq extok_less
-;    dq extok_doexit
-;
-;colon 'or', or
-;    dq extok_falsy
-;    dq extok_swap
-;    dq extok_falsy
-;    dq extok_not
-;    dq extok_swap
-;    dq extok_not
-;    dq extok_and
-;    dq extok_not
-;    dq extok_doexit
+colon '>', greater
+    dq extok_swap
+    dq extok_less
+    dq extok_do_exit
+
+colon 'or', or
+    dq extok_falsy
+    dq extok_swap
+    dq extok_falsy
+    dq extok_not
+    dq extok_swap
+    dq extok_not
+    dq extok_and
+    dq extok_not
+    dq extok_do_exit
 
 ;; stack manipulation
 
@@ -285,14 +285,14 @@ code_from_address:
     mov rax, rdi
     ret
 
-do_colon:
+native 'do_colon', do_colon
     sub forth_rstack, CELL_SIZE
     mov [forth_rstack], forth_pc
     add forth_word, CELL_SIZE
     mov forth_pc, forth_word
     jmp do_nextw
 
-do_exit:
+native 'do_exit', do_exit
     mov forth_pc, [forth_rstack]
     add forth_rstack, CELL_SIZE
     jmp do_nextw

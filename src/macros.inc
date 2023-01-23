@@ -3,6 +3,7 @@
 ;         arg2 - part of word identifier (will be used as assembly label)
 ;         arg3 - flags
 %define PREV_WORD 0
+
 %macro native 3
 %strlen WORD_LEN %1
 section .data
@@ -31,7 +32,7 @@ dq WORD_LEN
 db %1, 0
 db %3
 extok_%+ %2:
-    dq impl_docolon
+    dq impl_do_colon
 %define PREV_WORD %%PREV_WORD
 %endmacro
 
