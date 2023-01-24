@@ -6,9 +6,18 @@ Please report any bugs that you find, the interpreter is still in its early/alph
 
 Happy hacking! 😁
 
-<details>
-<summary>## Documentation</summary>
-<br>
+## Building
+
+Have `git`, `make` and `nasm` installed on your machine (At&T syntax with `as` compilation soon mayhaps?)
+
+```bash
+$ git clone https://github.com/icebarf/FORTH86
+$ cd FORTH86
+$ make newbuild
+$ ./forthress
+```
+
+## Documentation
 
 ### Sizes or Limits
 - Cell Size: 8 bytes
@@ -61,5 +70,3 @@ Happy hacking! 😁
 - `c!` (address char -- ) store a single byte at address
 - `@` (address -- value) read one memory cell and store that value on stack
 - `c@` (address -- char ) reads a byte from address and store that value on the stack.
-
-</details>
