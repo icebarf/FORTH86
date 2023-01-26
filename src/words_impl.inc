@@ -169,6 +169,19 @@ native '.', print_num
     call print_newline
     jmp do_nextw
 
+native '.S', print_stack
+    mov rcx, rsp
+.repeat:
+    cmp rcx, [data_stack_bp]
+    jae do_nextw
+    mov rdi, [rcx]
+    push rcx
+    call print_int64
+    call print_newline
+    pop rcx
+    add rcx, CELL_SIZE
+    jmp .repeat
+
 native 'key', read_char
     call read_char
     push rax

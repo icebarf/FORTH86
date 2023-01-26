@@ -88,4 +88,4 @@ _start:
     mov rbp, rsp
     mov [data_stack_bp], rsp
     mov forth_rstack, return_stack
-    jmp interpreter_loop 
+    jmp interpreter_loop
