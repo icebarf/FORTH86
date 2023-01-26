@@ -70,3 +70,7 @@ $ ./forthress
 - `c!` (address char -- ) store a single byte at address
 - `@` (address -- value) read one memory cell and store that value on stack
 - `c@` (address -- char ) reads a byte from address and store that value on the stack.
+
+## Note
+
+Kinda getting bored, might drop it. Althought I'm still interested in writing the compiler.
