@@ -66,35 +66,32 @@ native '%', remainder
 ;; logical words
 
 native 'falsy', falsy
-    cmp qword[rsp], 0
-    jne .not_falsy
-    mov qword[rsp], 0
-    jmp do_nextw
-.not_falsy:
-    mov qword[rsp], 1
+    pop r8
+    cmp r8, 0
+    setne al
+    movzx rax, al
+    push rax 
     jmp do_nextw
 
 native '=', equality
-    pop rax
-    cmp rax, [rsp]
-    jne .not_eq
-    mov qword[rsp], 1
-    jmp do_nextw
-.not_eq:
-    mov qword[rsp], 0
+    pop r8
+    cmp r8, [rsp]
+    sete al
+    movzx rax, al
+    mov [rsp], rax
     jmp do_nextw
 
 native 'and', and
-    cmp qword[rsp], 0
-    je .false
-    cmp qword[rsp+CELL_SIZE], 0
-    je .false
-    pop rax
-    mov qword[rsp], 1
-    jmp do_nextw
-.false:
-    pop rax
+    pop r8
+    cmp r8, 0
+    jne .not_false
     mov qword[rsp], 0
+    jmp do_nextw
+.not_false:
+    cmp qword[rsp], 0
+    setne al
+    movzx rax, al
+    mov [rsp], rax
     jmp do_nextw
 
 native 'not', not
@@ -104,21 +101,17 @@ native 'not', not
 native '<', less
     pop rax
     cmp qword[rsp], rax
-    jnl .nless
-    mov qword[rsp], 1
-    jmp do_nextw
-.nless:
-    mov qword[rsp], 0
+    setl al
+    movzx rax, al
+    mov [rsp], rax
     jmp do_nextw
 
 native '<=', less_eq
     pop rax
     cmp qword[rsp], rax
-    jnle .nlesseq
-    push qword 1
-    jmp do_nextw
-.nlesseq:
-    push qword 0
+    setle al
+    movzx rax, al
+    mov [rsp], rax
     jmp do_nextw
 
 colon '>', greater
