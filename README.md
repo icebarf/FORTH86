@@ -34,6 +34,10 @@ $ ./forthress
 #### Input/Output
 
 - `.` Pops off an integer from stack top, and prints it
+- `.S` Print all data stack contents
+- `key` read a one byte from stdin to data stack ( -- c)
+- `emit` write a byte to stdout from data stack (c -- )
+- `number` read a signed 64-bit integer from stdin ( -- N)
 
 #### Arithmetic
 
