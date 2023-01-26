@@ -10,15 +10,6 @@
 ;;  You should have received a copy of the GNU General Public License 
 ;;  along with this program. If not, see <https://www.gnu.org/licenses/>. 
 
-extern exit
-extern find_word
-extern parse_int64
-extern print_char
-extern print_int64
-extern print_newline
-extern print_string
-extern read_char
-extern read_word
 
 section .data
 unknown_word: db "Unknown word, please check documentation", 0xa, 0
@@ -38,8 +29,8 @@ return_stack: resq 1
 
 section .text
 
-;; FORTH Words
-
+%include "lib.inc"
+%include "dict.inc"
 %include "words_impl.inc"
 
 ; code_from_address - finds the ext_nat or ext_col value from a word 
