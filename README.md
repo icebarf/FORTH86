@@ -30,6 +30,11 @@ $ ./forthress
 #### Meta
 
 - `q` quit the interpreter
+- `do_colon` perform a colon word
+- `do_exit` exit from a colon word
+- `bye` quit the interpreter, exit code is taken from data stack top
+- `last` load the pointer to the last word defined on data stack
+- `state` load the state i.e compiler or interpreter mode on data stack
 
 #### Input/Output
 
@@ -38,6 +43,9 @@ $ ./forthress
 - `key` read a one byte from stdin to data stack ( -- c)
 - `emit` write a byte to stdout from data stack (c -- )
 - `number` read a signed 64-bit integer from stdin ( -- N)
+- `word` read a word (in ascii) from stdin and store it at addr (addr -- )
+- `prints` print a string, pointer to string is taken from data stack
+- `count` count the number of characters in a null-terminated string
 
 #### Arithmetic
 
