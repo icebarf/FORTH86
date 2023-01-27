@@ -13,7 +13,12 @@
 
 section .data
 unknown_word: db "Unknown word, please check documentation", 0xa, 0
+state: dq 0
+here: dq 0
+
 data_stack_bp: dq 0
+forth_state: dq 0
+
 program_stub: dq 0
 extok_interpret: dq .interpreter
 .interpreter: dq interpreter_loop

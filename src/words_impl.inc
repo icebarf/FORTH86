@@ -215,6 +215,27 @@ native 'number', read_signed_number
     call print_string
     jmp do_nextw
 
+native 'word', read_word
+    pop rdi
+    mov rsi, 65536
+    call read_word
+    push rdx
+    jmp do_nextw
+
+native 'prints', print_string
+    pop rdi
+    call print_string
+    call print_newline
+    jmp do_nextw
+
+;; string related words
+
+native 'count', strlen
+    pop rdi
+    call strlen
+    push rax
+    jmp do_nextw
+
 ;; forth machine memory manipulation words
 
 native 'mem', load_mem_addr
@@ -257,6 +278,18 @@ native 'do_colon', do_colon
     mov [forth_rstack], forth_pc
     add forth_word, CELL_SIZE
     mov forth_pc, forth_word
+    jmp do_nextw
+
+native 'bye', byebye
+    pop rdi
+    call exit
+
+native 'last', last_word_header
+    push PREV_WORD
+    jmp do_nextw
+
+native 'state', state_cell
+    push forth_state
     jmp do_nextw
 
 native 'do_exit', do_exit
