@@ -43,7 +43,7 @@ $ ./forthress
 - `key` read a one byte from stdin to data stack ( -- c)
 - `emit` write a byte to stdout from data stack (c -- )
 - `number` read a signed 64-bit integer from stdin ( -- N)
-- `word` read a word (in ascii) from stdin and store it at addr (addr -- )
+- `word` read a word (in ascii) from stdin and store it at addr, also store word length on data stack (addr -- len)
 - `prints` print a string, pointer to string is taken from data stack
 - `count` count the number of characters in a null-terminated string
 
