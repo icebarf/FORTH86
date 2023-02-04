@@ -2,6 +2,9 @@
 
 FORTH86 is an implementation of forthress, a FORTH dialect as described in Igor Zhirkov's Low Level Programming. This implementation is currently a work in progress, which I hopefully will finish by the end of January 2023.
 
+> the interpreter's done.
+> doesn't have colon words.
+
 Please report any bugs that you find, the interpreter is still in its early/alpha stage.
 
 Happy hacking! 😁
